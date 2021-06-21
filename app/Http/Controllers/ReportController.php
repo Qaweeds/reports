@@ -29,6 +29,7 @@ class ReportController extends Controller
 
     public function auth(Request $r)
     {
+        dd('q');
         if ($r->cookie('tokenq') !== 'tokenqq') {
             return redirect()->route('login.index');
         } else if (isset($r->D) and ($r->D > Carbon::now() or $r->D < '2021-03-01')) {
