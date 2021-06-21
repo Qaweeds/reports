@@ -1,0 +1,385 @@
+@font-face {
+    font-family: 'GLOUCESTER';
+    src: url('/font/GLECB.TTF') format('embedded-opentype'), /* IE6-IE8 */ url('/font/GLECB.TTF') format('woff2'), /* Super Modern Browsers */ url('/font/GLECB.TTF') format('woff'), /* Pretty Modern Browsers */ url('/font/GLECB.TTF') format('truetype'); /* Safari, Android, iOS */
+}
+
+.grey {
+    background-color: rgba(200, 200, 200, .3);
+}
+
+.notgrey {
+    background-color: rgba(255, 255, 255, .3);
+}
+
+thead .grey {
+    background-color: #DCDCDC;
+}
+
+thead .notgrey, .current-month-head, .current-season-head, .current-year-head {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.no-events {
+    pointer-events: none;
+}
+
+#rr-main a {
+    text-decoration: none;
+    /*color: #007bff;*/
+}
+
+#login-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+#rr-main a:hover {
+    text-decoration: none;
+    color: #007bff;
+}
+
+body {
+    font-family: 'GLOUCESTER', serif;
+    background-color: #f2f2f2;
+}
+
+#rr-main {
+    position: relative;
+    max-width: 1045px;
+    padding: 10px;
+}
+
+h1 {
+    margin-bottom: 1rem;
+}
+
+.print-wrap {
+    height: 60px;
+    width: 100%;
+}
+
+.table-wrap {
+    position: relative;
+    display: flex;
+    margin-bottom: 35px;
+    max-width: min-content;
+}
+
+.city-table h3 {
+    margin-bottom: 5px;
+}
+
+.table-wrap::-webkit-scrollbar {
+    /*width: 0;*/
+}
+
+.week-head {
+    font-weight: 600;
+}
+
+.my-table .week-bg {
+    background-color: LightCyan;
+}
+
+td {
+    text-align: right;
+    padding: 0;
+    min-width: 25px;
+    height: 31px;
+    font-size: 13px;
+    border: 1px solid green;
+}
+
+.mini-magazin {
+    color: blue;
+    vertical-align: top;
+}
+
+.table-head td {
+    position: sticky;
+    top: -1px;
+    text-align: center;
+    z-index: 2;
+}
+
+.col-end {
+    border-right: 1px solid green;
+}
+
+.name {
+    font-family: 'Tahoma', sans-serif;
+    padding-left: 1px;
+    width: 10%;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    position: sticky;
+    left: 47px;
+    background-color: white;
+}
+
+.hidden-million {
+    display: none;
+}
+
+#info-wrap {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    z-index: 2;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    right: 1px;
+}
+
+#box {
+    margin-left: 10px;
+    background: black;
+    text-align: center;
+    width: 250px;
+    min-width: 250px;
+    overflow: hidden;
+}
+
+.distributor-full-name {
+    max-width: 400px;
+    text-align: end;
+    font-family: 'Tahoma', sans-serif;
+    font-size: 30px;
+}
+
+.name-tr {
+    color: #000;
+    border-top: 1px solid green;
+}
+
+.my-table {
+    padding-right: 10px;
+    background-color: #fff;
+    border: 1px solid green;
+}
+
+.yellow-line {
+    background-color: yellow !important;
+}
+
+.magaz-name {
+    padding-right: 1px;
+}
+
+.big {
+    font-size: 20px;
+}
+
+.small {
+    font-size: 18px;
+    color: grey;
+}
+
+/* SORT STYLES */
+/*td.sorted[data-order="-1"]::after {*/
+/*content: "▼"*/
+/*}*/
+
+/*td.sorted[data-order="1"]::after {*/
+/*content: "▲"*/
+/*}*/
+.sort {
+    cursor: pointer;
+}
+
+.sorted {
+    background-color: grey;
+}
+
+/*------------*/
+.slice {
+    border-right: 2px solid black;
+}
+
+.total-data-border {
+    border-left: 2px solid black;
+}
+
+.itog-body-name, .itog-head {
+    border-left: 2px solid black !important;
+}
+
+.table-row {
+    display: table-row-group;
+}
+
+td a {
+    font-family: 'GLOUCESTER', sans-serif;
+    color: #000;
+}
+
+td a:hover {
+    color: #909090 !important;
+}
+
+.position {
+    /*font-weight: 700;*/
+    text-align: center;
+}
+
+.main-store {
+    text-align: center;
+    position: sticky;
+    left: 23px;
+    background-color: white;
+
+}
+
+.date-wrap {
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    transform: rotate(270deg);
+}
+
+.date {
+    font-family: 'Arial', serif;
+    padding-top: 38px;
+    vertical-align: top;
+    height: 65px;
+    max-width: 10px;
+}
+
+.print-button {
+    float: left;
+    margin: 0 20px 10px 0;
+}
+
+#wrong-date-alert {
+    display: none;
+}
+
+/*table places styles*/
+
+
+.store-head{
+    z-index: 3 !important;
+    left: 23px;
+}
+.fio-head{
+    z-index: 3 !important;
+    left: 47px;
+}
+
+.places-cell {
+    text-align: center;
+    height: 31px;
+    background-color: #fff;
+    position: sticky;
+    left: -1px;
+    z-index: 3;
+}
+
+.table-head .places-cell {
+    z-index: 4 !important;
+}
+.bg-white{
+    background-color: white;
+}
+.city-table {
+    margin-top: 0;
+    width: 100%;
+    position: fixed;
+    height: -webkit-fill-available;
+    overflow: scroll;
+    padding-bottom: 100px;
+
+}
+
+.city-table::-webkit-scrollbar {
+    width: 0;
+}
+
+@media screen and (max-width: 950px) {
+
+    #info-wrap {
+        margin-top: 2px;
+        align-items: center;
+        position: fixed;
+        width: 80%;
+
+    }
+
+    .distributor-full-name {
+        font-size: 18px;
+        text-align: right;
+
+    }
+
+    .city-table {
+        width: 97%;
+        padding-bottom: 0;
+    }
+
+    .tools-wrap {
+        /*height: 100px;*/
+        margin-bottom: 116px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 1.2rem;
+        margin-bottom: .4rem;
+    }
+
+}
+
+@media screen and (max-width: 576px) {
+    .print-button {
+        float: none;
+    }
+
+    /*.table-wrap {*/
+    /*max-width: 576px;*/
+    /*}*/
+    .tools-wrap {
+        margin-bottom: 50px;
+        width: 90%;
+    }
+
+    .date-form form {
+        justify-content: center;
+    }
+
+    .date-form form button {
+        margin: 10px 0 60px !important;
+        width: 100%;
+    }
+
+    .distributor-full-name {
+        font-size: 14px;
+    }
+
+    #info-wrap {
+        align-items: flex-end;
+    }
+    .city-table {
+        margin-top: 0 ;
+    }
+}
+@media screen and (min-width: 576px) {
+    .city-table {
+        margin-top: 213px !important;
+    }
+}
+@media screen and (min-width: 768px) {
+    .city-table {
+        margin-top: 175px !important;
+    }
+}
+
+
+@media print {
+    .print-button, .date-form {
+        display: none;
+    }
+}

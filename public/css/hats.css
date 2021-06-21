@@ -1,0 +1,17 @@
+
+
+.row_name{
+    text-align: left;
+}
+
+
+.store{
+    text-align: center;
+}
+.td-border-right{
+    border-right: solid 2px black;
+}
+
+#hats td{
+    font-size: 20px;
+}
