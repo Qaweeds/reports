@@ -75,7 +75,6 @@ class HatsReportController extends Controller
             'area' => 'площадь, м2',
             'profit_by_area' => 'прибыль с 1м2'
         ];
-        dd($row_names['store']->week);
 
         foreach ($row_names as $key => $q) {
             $data[$key] = $get[$key];
