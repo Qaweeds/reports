@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class ldapController extends Controller
 {
-    public function index(Request $r)
+    public function index()
     {
         if (Auth::user()) {
             return redirect()->route('report');

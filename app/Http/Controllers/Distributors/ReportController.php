@@ -10,8 +10,8 @@ use Carbon\Carbon;
 
 class ReportController extends BaseDistibutorsController
 {
-
     protected $names;
+
     protected $do_not_show = [
         'Багдасарова Светлана Яковлевна ',
         'Ковалева Алина Олеговна (осн.)',
