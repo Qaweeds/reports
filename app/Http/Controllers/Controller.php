@@ -11,7 +11,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    //Форматирование данных согласно ТЗ
+    /* Форматирование выручки для нового отчета*/
     public function bigAndSmall($str)
     {
         if (is_null($str)) return $str;
@@ -34,7 +34,7 @@ class Controller extends BaseController
             if (strlen($arr[0]) == 2) return '<span class="big"><small class="small">' . '0' . $arr[0][0] . '</small></span>';
 
             $s = ($arr[0][1] < 5) ? $arr[0][0] : (int )$arr[0][0] + 1;
-            if($s == 10) return '<span class="big">' . ($s - 9) . '<small class="small">'. 0 .'</small></span>';
+            if ($s == 10) return '<span class="big">' . ($s - 9) . '<small class="small">' . 0 . '</small></span>';
             return '<span class="big"><small class="small">' . $s . '</small></span>';
 
         }
@@ -54,5 +54,4 @@ class Controller extends BaseController
         }
         return '<span class="big">' . $arr[0] . '<small class="small">' . $s . '</small></span>';
     }
-
 }

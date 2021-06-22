@@ -7,13 +7,12 @@ use Illuminate\Http\Request;
 use Adldap\Adldap;
 use Adldap\Schemas\ActiveDirectory;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 
 class ldapController extends Controller
 {
     public function index(Request $r)
     {
-        if (!is_null($r->cookie('tokenq'))) {
+        if (Auth::user()) {
             return redirect()->route('report');
         }
         return view('login');
@@ -24,6 +23,7 @@ class ldapController extends Controller
 
         $name = $r->post('login');
         $pass = $r->post('password');
+        $remember = $r->post('remember');
 
         try {
             $config = [
@@ -33,7 +33,6 @@ class ldapController extends Controller
                 'password' => $pass,
                 'schema' => ActiveDirectory::class,
             ];
-
 
             $ad = new Adldap();
             $ad->addProvider($config);
@@ -53,14 +52,13 @@ class ldapController extends Controller
                 $check = User::where('name', $manager->name[0])->first();
             }
 
-            Auth::login($check);
+            Auth::login($check, $remember);
 
 
         } catch (\Exception $e) {
             dd($e);
             return redirect()->route('login.index')->withErrors(['message' => 'Не верные данные']);
         }
-        Cookie::queue('tokenq', 'tokenqq', 2500);
         return redirect()->route('report');
     }
 }

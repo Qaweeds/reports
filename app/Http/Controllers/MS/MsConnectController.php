@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MS;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class MsConnectController extends Controller
 {
     public static function msQuery($sql)
     {
+        dd(__METHOD__);
         $serverName = config('mssql.srv');
         $uid = config('mssql.uid');
         $pwd = config('mssql.pwd');

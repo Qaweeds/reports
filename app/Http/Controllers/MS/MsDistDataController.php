@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MS;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 
 class MsDistDataController extends Controller
 {
     public static function getData()
     {
+        dd(__METHOD__);
         $end = Carbon::now();
         $start = Carbon::now()->subDays(28);
         $sql = "SELECT a.[Date],

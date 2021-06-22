@@ -1,10 +1,13 @@
 
 
 .row_name{
-    text-align: left;
+    display: flex;
+    min-width: 196px;
+    justify-content: space-between;
 }
-
-
+.dollar_symb{
+    margin-right: 1px;
+}
 .store{
     text-align: center;
 }
@@ -15,3 +18,4 @@
 #hats td{
     font-size: 20px;
 }
+

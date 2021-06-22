@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Hats;
+
+
 
 use App\Models\Hats;
 use Carbon\Carbon;
-use Illuminate\Database\Events\StatementPrepared;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 
-class HatsController extends Controller
+class HatsController extends BaseHatsController
 {
     public function store()
     {
@@ -147,9 +146,9 @@ class HatsController extends Controller
         // SUPERINCOME_piece  -- доля супердохода от дохода
 
         $data = DB::select('SELECT 
-                                    Sum(cashbox / dollar_rate) as cashbox' . $period . ',
-                                    Sum(income / dollar_rate) as income' . $period . ',
-                                    Sum(profit / dollar_rate) as profit' . $period . ',
+                                    Sum(cashbox / dollar_rate) as cashbox_$' . $period . ',
+                                    Sum(income / dollar_rate) as income_$' . $period . ',
+                                    Sum(profit / dollar_rate) as profit_$' . $period . ',
                                     Sum(discounts) as discounts' . $period . ',
                                     Sum(SUPERINCOME) as SUPERINCOME' . $period . ',
                                     (Sum(SUPERINCOME) / Sum(income) *100) as SUPERINCOME_piece' . $period . ',
