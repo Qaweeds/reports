@@ -2,33 +2,33 @@
 
 namespace App\Http\Controllers\Distributors;
 
-
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class ReportController extends BaseDistibutorsController
 {
     protected $names;
 
     protected $do_not_show = [
-        'Багдасарова Светлана Яковлевна ',
+        'Багдасарова Светлана Яковлевна',
         'Ковалева Алина Олеговна (осн.)',
         'Ковресов Владислав Константинович (осн.)',
         'Окопная Юлия Вадимовна (осн.)',
-        'Темная Анна Игоревна ',
-        'Титкова Анна Вячеславовна '
+        'Темная Анна Игоревна',
+        'Титкова Анна Вячеславовна'
     ];
 
     public function index(Request $r)
     {
-        if (isset($r->D) and ($r->D > Carbon::now() or $r->D < '2021-03-01')) {
-            Session::flash('date-flip', 'Начальная дата не может быть больше, чем сегодняшняя дата. И не может быть мнньше, чем 1 Марта 2021!');
-            return view('report.wrong');
+        $rule = ['D' => 'sometimes | date | after_or_equal:2021-03-01'];
+        $v = Validator::make($r->input(), $rule);
+        if($v->fails()){
+            return view('report.wrong')->with(Session::flash('date-flip', 'Укажите дату после 3 Марта 2021 года'));
         }
 
-        $data['data'][] = $this->create_table($r);
+        $data['table'] = $this->create_table($r);
         $data['names'] = $this->names;
 
         return view('report.index', $data);
@@ -68,7 +68,6 @@ class ReportController extends BaseDistibutorsController
         $summ_by_period['season'] = $this->totalByPeriod(Carbon::parse($data[0][4]), 'season');
         $summ_by_period['year'] = $this->totalByPeriod(Carbon::parse($data[0][4]), 'year');
         $j = 0;
-
         for ($i = 0; $i < count($data); $i++) {
 
             if (in_array($data[$i][1], $this->do_not_show)) continue;
@@ -79,7 +78,7 @@ class ReportController extends BaseDistibutorsController
             $name_row = preg_match($pattern, $data[$i][1]);
             $second_magaz = '';
             $start_row = '';
-            $name = trim($data[$i][1]);
+            $name = $data[$i][1];
 
             if ($i == 0) { // если шапка таблицы
                 $t .= '<thead class="table-head"><tr><td class="places-cell"></td>';
@@ -107,7 +106,6 @@ class ReportController extends BaseDistibutorsController
                     else if ($key == 1) $cell = 'ФИО';
                     else if ($key == 2) $cell = '<div class="date-wrap no-events">Тренд</div>';
                     else if ($key == 3) $cell = '<div class="date-wrap no-events">Скол</div>';
-
                 }
 
                 if ($key > 3 and $key != $last_key) {
@@ -174,17 +172,20 @@ class ReportController extends BaseDistibutorsController
                             }
                         }
                         if (!$summ_of_two) {
-                            // в качестве мини-магазина используется последний магазин из предидущего цикла. возможно не правильно
-                            $t .= '<td style="background: LavenderBlush;"><small class="mini-magazin">' . substr($store[1], 0, 2) . '</small>' .
-                                $this->bigAndSmall($cell) . '</td>';
+                            foreach ($all_stores as $store) {
+                                if (substr($store[1], 0, 2) != substr($data[$i][0], 0, 2) and !is_null($store[$key])) {
+                                    $t .= '<td style="background: LavenderBlush;"><small class="mini-magazin">' . substr($store[1], 0, 2) . '</small>' .
+                                        $this->bigAndSmall($cell) . '</td>';
+                                    break;
+                                }
+                            }
                         }
-
                     } else {
                         $t .= '<td class="' . $weekcolor . '">' . $this->bigAndSmall($cell) . '</td>';
                     }
                 }
             }
-            /*------------------------------- СТАТИСТИКА МЕСЯЦ, СЕЗОН, ГОД. ШАПКА и ТЕЛО  --*/
+            /*------------------------------- СТАТИСТИКА МЕСЯЦ, СЕЗОН, ГОД. ТРЕНДЫ  --*/
             if ($i == 0) {
                 $t .= '<td class="current-month-head date sort total-data-border"><div class="date-wrap no-events">' . $ruMonths[Carbon::parse($firstDate)->subMonth()->format('n')] .
                     '</div></td>';

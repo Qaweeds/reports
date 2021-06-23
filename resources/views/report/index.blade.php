@@ -5,7 +5,6 @@
         <div id="wrong-date-alert" class="alert alert-danger"></div>
         @if(request()->path() == 'retail') <a href="{{route('report')}}"><h1>&#8594; Розница</h1></a> @endif
         @if(request()->path() == '/') <a href="{{route('report_retail')}}"><h1>&#8594; Реализаторы</h1></a> @endif
-
         <div id="info-wrap">
             <div id="box"></div>
             <span class="distributor-full-name"></span>
@@ -13,9 +12,7 @@
 
         <div class="city-table">
             <div class="table-wrap">
-                @foreach($data as $table)
-                       {!! $table !!}
-                @endforeach
+                {!! $table !!}
             </div>
 
             <div class="tools-wrap">

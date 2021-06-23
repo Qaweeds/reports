@@ -38,4 +38,8 @@ class Handler extends ExceptionHandler
             //
         });
     }
+    public function context()
+    {
+        return ['qqq' => 'eee'];
+    }
 }

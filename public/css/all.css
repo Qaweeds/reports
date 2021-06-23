@@ -69,9 +69,6 @@ h1 {
     margin-bottom: 5px;
 }
 
-.table-wrap::-webkit-scrollbar {
-    /*width: 0;*/
-}
 
 .week-head {
     font-weight: 600;
@@ -330,7 +327,6 @@ td a:hover {
         font-size: 1.2rem;
         margin-bottom: .4rem;
     }
-
 }
 
 @media screen and (max-width: 576px) {
@@ -371,7 +367,14 @@ td a:hover {
         margin-top: 213px !important;
     }
 }
-@media screen and (min-width: 768px) {
+
+@media screen and (min-width: 769px) {
+    .city-table {
+        margin-top: 177px !important;
+    }
+}
+
+@media screen and (min-width: 950px) {
     .city-table {
         margin-top: 175px !important;
     }

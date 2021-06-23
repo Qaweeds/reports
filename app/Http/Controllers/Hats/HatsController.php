@@ -79,7 +79,7 @@ class HatsController extends BaseHatsController
     }
     public function getTodayData()
     {
-        $date = Carbon::now()->subDays(2)->format('Y-m-d');
+        $date = Carbon::now()->subDays(10)->format('Y-m-d');
         $data = DB::select('SELECT store, 
                                           cashbox, 
                                           cashbox_ret, 
