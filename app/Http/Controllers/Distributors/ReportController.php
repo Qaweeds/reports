@@ -24,7 +24,7 @@ class ReportController extends BaseDistibutorsController
     {
         $rule = ['D' => 'sometimes | date | after_or_equal:2021-03-01'];
         $v = Validator::make($r->input(), $rule);
-        if($v->fails()){
+        if ($v->fails()) {
             return view('report.wrong')->with(Session::flash('date-flip', 'Укажите дату после 3 Марта 2021 года'));
         }
 
@@ -171,15 +171,7 @@ class ReportController extends BaseDistibutorsController
                                 break;
                             }
                         }
-                        if (!$summ_of_two) {
-                            foreach ($all_stores as $store) {
-                                if (substr($store[1], 0, 2) != substr($data[$i][0], 0, 2) and !is_null($store[$key])) {
-                                    $t .= '<td style="background: LavenderBlush;"><small class="mini-magazin">' . substr($store[1], 0, 2) . '</small>' .
-                                        $this->bigAndSmall($cell) . '</td>';
-                                    break;
-                                }
-                            }
-                        }
+                        if (!$summ_of_two) $t .= '<td class="2 ' . $weekcolor . '">' . $this->bigAndSmall($cell) . '</td>';
                     } else {
                         $t .= '<td class="' . $weekcolor . '">' . $this->bigAndSmall($cell) . '</td>';
                     }
