@@ -3,8 +3,9 @@
 @section('content')
     <main id="rr-main">
         <div id="wrong-date-alert" class="alert alert-danger"></div>
-        @if(request()->path() == 'retail') <a href="{{route('report')}}"><h1>&#8594; Розница</h1></a> @endif
-        @if(request()->path() == '/') <a href="{{route('report_retail')}}"><h1>&#8594; Реализаторы</h1></a> @endif
+        {{--@if(request()->path() == 'retail') <a href="{{route('report')}}"><h1>&#8594; Розница</h1></a> @endif--}}
+        {{--@if(request()->path() == '/') <a href="{{route('report_retail')}}"><h1>&#8594; Реализаторы</h1></a> @endif--}}
+        <a href="{{route('report')}}"><h1>Реализаторы</h1></a>
         <div id="info-wrap">
             <div id="box"></div>
             <span class="distributor-full-name"></span>

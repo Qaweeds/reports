@@ -4,19 +4,17 @@ namespace App\Http\Controllers;
 
 
 use Illuminate\Http\Request;
+use App\Models\Distributor;
+use App\Models\DistributorsData;
+use App\Models\DistributorsRetail;
+use App\Models\DistributorTimesheet;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use Carbon\Carbon;
 
 class Test extends Controller
 {
-    public function __invoke()
-    {
-//        dd(self::class);
-        try {
-            $names = DistributorsRetail::distinct('name')->pluck('name');
-        } catch (\Throwable $e){
-            dd($e);
-        }
-
-
-
-    }
+public function __invoke()
+{
+    // TODO: Implement __invoke() method.
+}
 }

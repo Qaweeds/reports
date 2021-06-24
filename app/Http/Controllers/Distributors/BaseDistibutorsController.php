@@ -5,13 +5,30 @@ namespace App\Http\Controllers\Distributors;
 use App\Http\Controllers\Controller;
 use App\Models\DistributorsData;
 use Carbon\Carbon;
+use App\Models\Distributor;
+use App\Models\DistributorsRetail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
+
 class BaseDistibutorsController extends Controller
 {
 
     private $keys;
     private $shuffleData;
     private $shuffled;
+    public static $distributor;
+    protected static $table;
+
+    public function __construct()
+    {
+        if (Request::path() == 'retail') {
+            self::$distributor = new DistributorsRetail();
+            self::$table = 'distributors_retails';
+        } else {
+            self::$distributor = new Distributor();
+            self::$table = 'distributors';
+        }
+    }
 
     // сумма за промжуток
     public function totalByPeriod(Carbon $date, $period)
@@ -55,7 +72,7 @@ class BaseDistibutorsController extends Controller
 
         }
 
-        $data = DB::table('distributors')->select(DB::raw('name, sum(summ) as total'))->whereBetween('date', array($start, $end))->groupBy('name')->get();
+        $data = DB::table(self::$table)->select(DB::raw('name, sum(summ) as total'))->whereBetween('date', array($start, $end))->groupBy('name')->get();
         foreach ($data as $dist) {
             $arr[trim($dist->name)] = $dist->total;
         }

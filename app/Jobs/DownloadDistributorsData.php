@@ -143,29 +143,42 @@ class DownloadDistributorsData implements ShouldQueue
         return array('data' => $arr, 'date' => $date);
     }
 
-    public function update_primary(){
-        $data = $this->get('Sales_Distributors');
+    public function update_primary($table = null)
+    {
+        if (is_null($table)) {
+            $dist = new Distributor();
+            $data = $this->get('Sales_Distributors');
+        } else {
+            $dist = new DistributorsRetail();
+            $data = $this->get('Sales_Distributors2');
+        }
+
         $data = $this->trimData($data);
         $data = $this->sort($data);
         $data = $this->slice($data);
-
         $rangeEnd = Carbon::now()->format('Y-m-d');
         $rangeStart = Carbon::parse($rangeEnd)->subDays(45)->format('Y-m-d');
         $stores = $this->stores;
-
-        if (isset($data['Харьков'])) unset($data['Харьков']); //Убрать общие цифры по харькову
+        $superstores = $data['Харьков'];
+        unset($data['Харьков']); //Убрать общие цифры по харькову
         $i = 0;
 
         foreach ($stores as $store) {
-            Distributor::where('store', $store)->whereBetween('date', array($rangeStart, $rangeEnd))->delete();
+            $dist::where('store', $store)->whereBetween('date', array($rangeStart, $rangeEnd))->delete();
         }
         foreach ($data as $name => $value) {
             foreach ($value as $store => $val) {
                 foreach ($val as $date => $summ) {
                     if ($date != 'Подразделение.Регион') {
-                        if (isset($store) and $store == 'Офис') $store .= ' Харьков 120';
                         $i++;
-                        Distributor::updateOrCreate(
+
+                        if ($store == 'Офис') $store .= ' Харьков 120';
+                        $summ = (int)str_replace(',', '', strtok($summ, '.'));
+
+                        if (in_array($store, $this->stores) and $date == '21.06.2021') {
+                            $summ += (int)str_replace(',', '', strtok($superstores[$store][$date], '.'));
+                        }
+                        $dist::updateOrCreate(
                             [
                                 'name' => trim($name),
                                 'date' => Carbon::parse($date)->format('Y-m-d'),
@@ -188,10 +201,10 @@ class DownloadDistributorsData implements ShouldQueue
         set_time_limit(300);
         $this->updateDistributorsTimeSheet();
         $this->updateDistributorsStaff();
-        $this->updateDistributorsRetail();
         $this->update_primary();
         $this->updateSuperStores();
-
+        $this->update_primary('second');
+        $this->updateSuperStores('second');
     }
 
     public function updateDistributorsTimeSheet()    //Табель
@@ -250,9 +263,12 @@ class DownloadDistributorsData implements ShouldQueue
         echo ' stuff' . $i;
     }
 
-    public function updateSuperStores()
+    public function updateSuperStores($table = null)
     {
+
         set_time_limit(200);
+        if (is_null($table)) $dist = new Distributor();
+        else $dist = new DistributorsRetail();
         $rangeEnd = Carbon::now()->format('Y-m-d');
         $rangeStart = Carbon::parse($rangeEnd)->subDays(45)->format('Y-m-d');
         $stores = $this->stores;
@@ -261,10 +277,10 @@ class DownloadDistributorsData implements ShouldQueue
             foreach ($dates as $date) {
                 $names = DistributorTimeSheet::where('store', $store)->where('work', 1)->where('date', $date)->pluck('name');
                 if (count($names)) {
-                    $summ = Distributor::where('store', $store)->where('date', $date)->sum('summ') / count($names);
-                    Distributor::where('store', $store)->where('date', $date)->delete();
+                    $summ = $dist::where('store', $store)->where('date', $date)->sum('summ') / count($names);
+                    $dist::where('store', $store)->where('date', $date)->delete();
                     foreach ($names as $name) {
-                        Distributor::updateOrCreate(
+                        $dist::updateOrCreate(
                             [
                                 'name' => trim($name),
                                 'date' => $date,
@@ -279,46 +295,5 @@ class DownloadDistributorsData implements ShouldQueue
                 }
             }
         }
-    }
-
-    public function updateDistributorsRetail()
-    {
-        set_time_limit(100);
-        $data = $this->get('Sales_Distributors2');
-        $data = $this->trimData($data);
-        $data = $this->sort($data);
-        $data = $this->slice($data);
-
-        $rangeEnd = Carbon::now()->format('Y-m-d');
-        $rangeStart = Carbon::parse($rangeEnd)->subDays(45)->format('Y-m-d');
-        $stores = $this->stores;
-
-        if (isset($data['Харьков'])) unset($data['Харьков']); //Убрать общие цифры по харькову
-        $i = 0;
-
-        foreach ($stores as $store) {
-            DistributorsRetail::where('store', $store)->whereBetween('date', array($rangeStart, $rangeEnd))->delete();
-        }
-        foreach ($data as $name => $value) {
-            foreach ($value as $store => $val) {
-                foreach ($val as $date => $summ) {
-                    if ($date != 'Подразделение.Регион') {
-                        if (isset($store) and $store == 'Офис') $store .= ' Харьков 120';
-                        $i++;
-                        DistributorsRetail::updateOrCreate(
-                            [
-                                'name' => trim($name),
-                                'date' => Carbon::parse($date)->format('Y-m-d'),
-                                'store' => $store
-                            ],
-                            [
-                                'summ' => (int)str_replace(',', '', strtok($summ, '.'))
-                            ]
-                        );
-                    }
-                }
-            }
-        }
-        echo ' retail' . $i;
     }
 }

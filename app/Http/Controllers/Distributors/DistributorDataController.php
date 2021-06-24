@@ -2,23 +2,19 @@
 
 namespace App\Http\Controllers\Distributors;
 
-use App\Models\DistributorsRetail;
 use Carbon\Carbon;
-use App\Models\Distributor;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 
 class DistributorDataController extends BaseDistibutorsController
 {
+
+
     public static function getData($date = null)
     {
-        if (Request::path() == 'retail') {
-            $distributor = new DistributorsRetail();
-            $table = 'distributors_retails';
-        }else{
-            $distributor = new Distributor();
-            $table = 'distributors';
-        }
+
+        $distributor = parent::$distributor;
+        $table = parent::$table;
+
         $range = 28;
         $cityData = array();
         $rangeEnd = (isset($date)) ? $date : Carbon::now()->format('Y-m-d');
