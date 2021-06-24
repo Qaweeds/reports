@@ -123,7 +123,7 @@ class HatsController extends BaseHatsController
                                     Sum(discounts) as discounts' . $period . ',
                                     Sum(SUPERINCOME) as SUPERINCOME' . $period . ',
                                     Sum(items_sold) as items_sold' . $period . ',
-                                    (Sum(income_piece) / Sum(income) * 100) as income_piece_percent' . $period . '
+                                    (Sum(income_piece) / COUNT(income_piece)) as income_piece_percent' . $period . '
                                 FROM `hats` WHERE date BETWEEN \'' . $start . '\' and \'' . $date . '\' 
                                 GROUP BY store');
         foreach ($data as &$d) {
