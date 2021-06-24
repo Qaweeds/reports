@@ -143,7 +143,7 @@ class DownloadDistributorsData implements ShouldQueue
         return array('data' => $arr, 'date' => $date);
     }
 
-    public function update_primary($table = null)
+    public function updateDistributors($table = null)
     {
         if (is_null($table)) {
             $dist = new Distributor();
@@ -175,7 +175,7 @@ class DownloadDistributorsData implements ShouldQueue
                         if ($store == 'Офис') $store .= ' Харьков 120';
                         $summ = (int)str_replace(',', '', strtok($summ, '.'));
 
-                        if (in_array($store, $this->stores) and $date == '21.06.2021') {
+                        if (in_array($store, $this->stores)) {
                             $summ += (int)str_replace(',', '', strtok($superstores[$store][$date], '.'));
                         }
                         $dist::updateOrCreate(
@@ -201,9 +201,9 @@ class DownloadDistributorsData implements ShouldQueue
         set_time_limit(300);
         $this->updateDistributorsTimeSheet();
         $this->updateDistributorsStaff();
-        $this->update_primary();
+        $this->updateDistributors();
         $this->updateSuperStores();
-        $this->update_primary('second');
+        $this->updateDistributors('second');
         $this->updateSuperStores('second');
     }
 
