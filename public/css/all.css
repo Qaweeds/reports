@@ -295,6 +295,17 @@ td a:hover {
     width: 0;
 }
 
+
+.history{
+    position: absolute;
+    left: 20px;
+    color: red;
+    font-size: 14px;
+}
+.history p {
+    margin: 0;
+    padding: 0;
+}
 @media screen and (max-width: 950px) {
 
     #info-wrap {
@@ -326,6 +337,10 @@ td a:hover {
     h1 {
         font-size: 1.2rem;
         margin-bottom: .4rem;
+    }
+    .history{
+        font-size: 12px;
+        max-width: 150px;
     }
 }
 

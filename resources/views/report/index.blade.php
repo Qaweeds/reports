@@ -3,9 +3,17 @@
 @section('content')
     <main id="rr-main">
         <div id="wrong-date-alert" class="alert alert-danger"></div>
-        {{--@if(request()->path() == 'retail') <a href="{{route('report')}}"><h1>&#8594; Розница</h1></a> @endif--}}
-        {{--@if(request()->path() == '/') <a href="{{route('report_retail')}}"><h1>&#8594; Реализаторы</h1></a> @endif--}}
-        <a href="{{route('report')}}"><h1>Реализаторы</h1></a>
+        @if(request()->path() == 'retail')
+            <a href="{{route('report')}}"><h1>Реализаторы (Все)</h1></a>
+            <div class="history">
+                <p> Данные с 11.05.2021</p>
+                <p> Цыфры за <u>сезон</u> и <u>год</u> не полные</p>
+                <p> (Временно)</p>
+            </div>
+        @else
+            <a href="{{route('report_retail')}}"><h1>Реализаторы (Опт)</h1></a>
+        @endif
+
         <div id="info-wrap">
             <div id="box"></div>
             <span class="distributor-full-name"></span>

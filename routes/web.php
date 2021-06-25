@@ -9,7 +9,7 @@ Route::middleware('auth')->group(function () {
 
     Route::namespace('Distributors')->group(function () {
         Route::get('/', 'ReportController@index')->name('report');
-        Route::get('/retail', 'ReportController@index')->name('report_retail');
+        Route::get('/all', 'ReportController@index')->name('report_retail');
     });
 
     Route::namespace('Hats')->group(function () {
