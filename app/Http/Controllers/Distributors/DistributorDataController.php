@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Distributors;
 
+use App\Models\Distributor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -11,34 +12,33 @@ class DistributorDataController extends BaseDistibutorsController
 
     public static function getData($date = null)
     {
-
         $distributor = parent::$distributor;
         $table = parent::$table;
-
-        $range = 28;
-        $cityData = array();
-        $rangeEnd = (isset($date)) ? $date : Carbon::now()->format('Y-m-d');
+        $range = 27;
+//        $rangeEnd = (isset($date)) ? $date : Carbon::now()->format('Y-m-d');
+//        $rangeStart = Carbon::parse($rangeEnd)->subDays($range)->format('Y-m-d');
+        $rangeEnd = (isset($date)) ? $date : Carbon::now()->subDay()->format('Y-m-d');
         $rangeStart = Carbon::parse($rangeEnd)->subDays($range)->format('Y-m-d');
-        $names = $distributor::distinct()->whereBetween('date', array($rangeStart, $rangeEnd))->orderBy('name')->pluck('name');
-        $dates = $distributor::distinct()->whereBetween('date', array($rangeStart, $rangeEnd))->orderByDesc('date')->pluck('date')->toArray();
-        foreach ($names as $name) {
-            $data = DB::table($table)
-                ->whereBetween('date', array($rangeStart, $rangeEnd))
-                ->where('name', $name)
-                ->orderByDesc('date')
-                ->orderBy('store')
-                ->get()->toArray();
-            foreach ($data as $dayData) {
-                $bigData[$name][$dayData->store][$dayData->date] = ($dayData->summ) ? $dayData->summ : null;  //Основные данные
-            }
-            $tabel = DB::table('distributor_timesheets')
-                ->whereBetween('date', array($rangeStart, $rangeEnd))
-                ->where('name', $name)
-                ->get()->toArray();
-            foreach ($tabel as $dayData) {
-                $tableData[$name][$dayData->store][$dayData->date] = $dayData->work;   // ТАБЕЛЬ
-            }
+        $date_range = array($rangeStart, $rangeEnd);
+        $group_cols = array('date', 'name', 'store');
+
+        $dates = $distributor::distinct()->whereBetween('date',$date_range)->orderByDesc('date')->pluck('date')->toArray();
+        $data = DB::table($table)->groupBy($group_cols)
+            ->whereBetween('date', $date_range)
+            ->orderBy('name')
+            ->get(['name', 'date', 'store', 'summ']);
+        $tabel = DB::table('distributor_timesheets')->groupBy($group_cols)
+            ->whereBetween('date',$date_range)
+            ->orderBy('name')
+            ->get(['name', 'date', 'store', 'work']);
+
+        foreach ($tabel as $dayData) {
+            $tableData[$dayData->name][$dayData->store][$dayData->date] = $dayData->work;   // ТАБЕЛЬ
         }
+        foreach ($data as $dayData) {
+            $bigData[$dayData->name][$dayData->store][$dayData->date] = ($dayData->summ) ? $dayData->summ : null;  //Основные данные
+        }
+
         // Убираем "пустые магазины"
         foreach ($bigData as $name_empty_store => & $data_empty_store) {
             foreach ($data_empty_store as $key_empty_store => & $dates_empty_store) {
@@ -65,6 +65,7 @@ class DistributorDataController extends BaseDistibutorsController
                 }
             }
         }
+
         //Сверяем с табелем
         foreach ($bigData as $name => $data) {
             foreach ($data as $store => $name_data) {
@@ -89,13 +90,16 @@ class DistributorDataController extends BaseDistibutorsController
                 $arr[] = null;
                 $arr[] = $name;
                 foreach ($dates as $date) {
-                    $check = null;
+                    $check = false;
                     foreach ($tableData[$name] as $store => $day_data) {   //сверяем с табелем
                         if ($check) break;
                         if (isset($tableData[$name][$store][$date])) $check = $tableData[$name][$store][$date];
                     }
                     if ($check) {
-                        $summ = $distributor::where('name', $name)->where('date', $date)->sum('summ');
+                        $summ = 0;
+                        foreach ($data as $d){
+                            $summ += $d[$date];
+                        }
                     } else {
                         $summ = null;
                     }
@@ -130,8 +134,7 @@ class DistributorDataController extends BaseDistibutorsController
         $header = array_merge(array(null, null, null, null), $dates);
         $header[] = null;
         array_unshift($cityData, $header);
+
         return $cityData;
     }
-
-
 }

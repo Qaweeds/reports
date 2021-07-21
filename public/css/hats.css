@@ -19,3 +19,11 @@
     font-size: 20px;
 }
 
+#hats-date{
+    height: 28px;
+    border: none;
+    width: 193px;
+}
+#hats-date:focus{
+    outline: none;
+}

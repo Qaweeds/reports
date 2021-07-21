@@ -56,7 +56,6 @@ class ldapController extends Controller
 
 
         } catch (\Exception $e) {
-            dd($e);
             return redirect()->route('login.index')->withErrors(['message' => 'Не верные данные']);
         }
         return redirect()->route('report');

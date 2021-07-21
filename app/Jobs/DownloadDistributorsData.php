@@ -42,8 +42,7 @@ class DownloadDistributorsData implements ShouldQueue
     public function get($filename)
     {
         $xls = IOFactory::load(base_path('storage/app/public/dist/' . $filename . '.xlsx'));
-        $range = 'A1:' . $xls->getActiveSheet()->getHighestRowAndColumn()['column'] . $xls->getActiveSheet()->getHighestRowAndColumn()['row'];
-        $xls = $xls->getActiveSheet()->rangeToArray($range);
+        $xls = $xls->getActiveSheet()->toArray();
         return $xls;
     }
 
@@ -162,7 +161,6 @@ class DownloadDistributorsData implements ShouldQueue
         $superstores = $data['Харьков'];
         unset($data['Харьков']); //Убрать общие цифры по харькову
         $i = 0;
-
         foreach ($stores as $store) {
             $dist::where('store', $store)->whereBetween('date', array($rangeStart, $rangeEnd))->delete();
         }
@@ -272,7 +270,7 @@ class DownloadDistributorsData implements ShouldQueue
         $rangeEnd = Carbon::now()->format('Y-m-d');
         $rangeStart = Carbon::parse($rangeEnd)->subDays(45)->format('Y-m-d');
         $stores = $this->stores;
-        $dates = DistributorTimeSheet::distinct()->whereBetween('date', array($rangeStart, $rangeEnd))->orderByDesc('date')->pluck('date')->toArray();
+        $dates = DistributorTimeSheet::distinct()->whereBetween('date', array('2021-03-01', $rangeEnd))->orderByDesc('date')->pluck('date')->toArray();
         foreach ($stores as $store) {
             foreach ($dates as $date) {
                 $names = DistributorTimeSheet::where('store', $store)->where('work', 1)->where('date', $date)->pluck('name');

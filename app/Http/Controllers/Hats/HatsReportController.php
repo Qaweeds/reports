@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Hats;
 
 
+use Carbon\Carbon;
+
 class HatsReportController extends BaseHatsController
 {
 
@@ -16,8 +18,7 @@ class HatsReportController extends BaseHatsController
         $db_data = $this->hats->get();
         $do_not_format = $this->do_not_format;
         $middle_values = $this->middle_value;
-
-        $table = '<table id="hats" class="my-table mt-5 ml-5">';
+        $header = HatsController::header();
 //        $row_names = [
 //            'store' => now(),
 //            'cashbox' => 'к\'с',
@@ -54,8 +55,11 @@ class HatsReportController extends BaseHatsController
 //            'area' => 'площадь, м2',
 //            'profit_by_area' => 'прибыль с 1м2'
 //        ];
+        $r = request()->get('period');
+        $date = (isset($r) and $r < Carbon::now()->format('Y-m-d')) ? $r : Carbon::now()->format('Y-m-d');
+        $form = '<form><input  name="period" id="hats-date" type="date" value="' . $date . '"></form>';
         $row_names = [
-            'store' => now()->format('d-m-Y'),
+            'store' => $form,
             'cashbox' => 'Касса',
             'income' => 'Доход',
             'cashbox_ret' => 'Касса(Розница)',
@@ -66,7 +70,8 @@ class HatsReportController extends BaseHatsController
             'income_$_М' => 'Доход (м) <span class="dollar_symb">$</span>',
             'rent_$' => 'Аренда <span class="dollar_symb">$</span>',
             'salary_$' => 'Зарплата <span class="dollar_symb">$</span>',
-            'other_costs' => 'Доп расходы',
+            'other_costs_$' => 'Доп расходы <span class="dollar_symb">$</span>',
+            'distributed_costs_$' => 'Распред. расходы <span class="dollar_symb">$</span>',
             'profit_$_М' => 'Прибыль (м) <span class="dollar_symb">$</span>',
             // Средняя прибыль за месяц отсутствует
             // Средне-годовая прибыль за месяц отсутствует
@@ -79,8 +84,8 @@ class HatsReportController extends BaseHatsController
             'discounts_М' => 'Сумма скидок (м)',
             'SUPERINCOME_М' => 'СВЕРХДОХОД (м)',
             'SUPERINCOME_piece_М' => 'Сверхдоход / доход (м)',
-            'items_sold' => 'Штук продано',
             'items_sold_1' => 'Штук продано (с1)',
+            'items_sold' => 'Штук продано',
             'items_sold_ret' => 'Штук продано (розн)',
             'item_sold_ret_piece' => 'Шт(розн) / Шт(общ)',
             'items_returned_М' => 'Возвраты (м)',
@@ -95,23 +100,50 @@ class HatsReportController extends BaseHatsController
             $data[$key] = $db_data[$key];
         }
 
+        $table = '<table id="hats" class="my-table">';
+        $table .= '<thead>';
+
         foreach ($data as $key => $value) {
             $table .= '<tr><td class="row_name">' . $row_names[$key] . '</td>';
-            if ($key == 'store') $table .= '<td class="td-border-right">Общее</td>';
+            if ($key == 'store') $table .= '<td class="td-border-right">Скол</td>';
             elseif (in_array($key, $middle_values)) $table .= '<td class="td-border-right">' . round(array_sum($value) / count($value)) . '&#176;</td>';
-            elseif (in_array($key, $do_not_format))$table .= '<td class="td-border-right">' . round(array_sum($value)) . '</td>';
+            elseif (in_array($key, $do_not_format)) $table .= '<td style="font-family: Tahoma; font-size: 13px" class="td-border-right">' . round(array_sum($value)) . '</td>';
             else $table .= '<td class="td-border-right">' . $this->bigAndSmall(round(array_sum($value))) . '</td>';
 
             foreach ($value as $v) {
                 $v = round($v);
                 if ($key == 'store') $table .= '<td class="store">' . $v . '</td>';
-                elseif (in_array($key, $do_not_format)) $table .= '<td>' . $v . '</td>';
+                elseif (in_array($key, $middle_values)) $table .= '<td>' . $v . '&#176;</td>';
+                elseif (in_array($key, $do_not_format)) $table .= '<td style="font-family: Tahoma; font-size: 13px">' . $v . '</td>';
                 else $table .= '<td>' . $this->bigAndSmall($v) . '</td>';
             }
             $table .= '</tr>';
+            if ($key == 'store') $table .= '</thead>';
         }
         $table .= '</table>';
 
-        return view('hats.index', array('table' => $table));
+
+        // HEADER TABLE
+        $table_header = '<table>';
+        foreach ($header as $key => $value) {
+            $table_header .= '<tr>';
+            foreach ($value as $k => $val) {
+                if (Carbon::parse($k)->format('m') < 7) {
+                    $bg = 'grey';
+                } else {
+                    $bg = 'notgrey';
+                }
+                if ($key == 'income_rate') {
+                    $table_header .= '<td class="' . $bg . '">' . round($val) . '&#176;</td>';
+                } else {
+                    $table_header .= '<td class="' . $bg . '">' . round($val) . '</td>';
+                }
+            }
+            $table_header .= '</tr>';
+        }
+        $table_header .= '</table>';
+
+
+        return view('hats.index', compact('table', 'table_header'));
     }
 }

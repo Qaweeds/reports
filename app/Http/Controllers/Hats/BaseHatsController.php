@@ -24,7 +24,6 @@ class BaseHatsController extends Controller
     protected $middle_value = [
         'cashbox_ret_piece_1',
         'SUPERINCOME_piece_М',
-        'profit_by_area',
         'item_sold_ret_piece',
         'income_piece_percent_1',
     ];

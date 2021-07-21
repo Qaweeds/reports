@@ -12,19 +12,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/all', 'ReportController@index')->name('report_retail');
     });
 
-    Route::namespace('Hats')->group(function () {
-        Route::get('/hats', 'HatsReportController@create');
+    Route::prefix('hats')->namespace('Hats')->group(function () {
+        Route::get('/', 'HatsReportController@create')->name('hats.create');
     });
 
-
-    Route::get('/test', 'Test');
+    Route::prefix('test')->group(function () {
+        Route::get('/', 'Test');
+    });
 
 });
+
+
+
 
 
 Route::fallback(function () {
     return redirect()->route('login.index');
 });
-
-
-

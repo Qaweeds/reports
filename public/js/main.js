@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    // $('.date').css('border', '1px solid green');
+
     /*CLOSE IMAGE BOX */
     $('#box').click(function () {
         if ($(window).width() < 576) $('.city-table').css('margin-top', '0');
@@ -8,25 +8,12 @@ $(document).ready(function () {
         $('.distributor-full-name').empty();
     });
 
-    /*SHOW PHOTO
-    * get src of the photo from table TD with class="name" value.
-    * $src TRIM spaces if necessary
-    * */
 
 
     /* HEADER MENU DROPDOWN */
     $('.dropdown').click(function () {
         $('.dropdown-menu').toggle();
     });
-
-    // $('.name').click(function (event) {
-    //     if ($(window).width() < 756) $('.city-table').css('margin-top', '181px');
-    //     $text = names[this.innerText][0] + "<br>" + names[this.innerText][1];
-    //     $src = names[this.innerText][0].replace(/\s+/g, ''); // Удалить пробелы
-    //     $img = '<img   onerror="imgError(this);" style="height: 250px;" src="storage/Реализаторы/' + $src + '.jpg">';
-    //     $('.distributor-full-name').empty().html($text);
-    //     $('#box').empty().append($img);
-    // });
 
 
     /* YELLOW-LINE  ONCLICK TABLE FUNCTION*/
@@ -71,6 +58,7 @@ $(document).ready(function () {
 
     $('.date-form input').focus(function () {
         this.type = 'date';
+        this.setAttribute('min', '2021-03-01');
     }).blur(function () {
         if (!this.value) this.type = 'text';
     });
@@ -115,11 +103,10 @@ function printpage() {
 * */
 document.addEventListener('DOMContentLoaded', () => {
     var getSort = ({target}) => {
-        if(target.textContent == 'M' || target.textContent === 'ФИО'){
-            
+        if(target.textContent === 'M' || target.textContent === 'ФИО'){
             var order = (target.dataset.order = 1);
         }else{
-            var order = (target.dataset.order = -1);
+            order = (target.dataset.order = -1);
         }
         var index = [...target.parentNode.cells].indexOf(target);
         var collator = new Intl.Collator(['en', 'ru'], {numeric: true});

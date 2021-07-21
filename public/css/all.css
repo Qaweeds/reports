@@ -23,14 +23,15 @@ thead .notgrey, .current-month-head, .current-season-head, .current-year-head {
     pointer-events: none;
 }
 
+#rr-main {
+    position: relative;
+    max-width: 1045px;
+    padding: 10px;
+}
+
 #rr-main a {
     text-decoration: none;
     /*color: #007bff;*/
-}
-
-#login-form {
-    max-width: 500px;
-    margin: 0 auto;
 }
 
 #rr-main a:hover {
@@ -38,15 +39,14 @@ thead .notgrey, .current-month-head, .current-season-head, .current-year-head {
     color: #007bff;
 }
 
+#login-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
 body {
     font-family: 'GLOUCESTER', serif;
     background-color: #f2f2f2;
-}
-
-#rr-main {
-    position: relative;
-    max-width: 1045px;
-    padding: 10px;
 }
 
 h1 {
@@ -68,7 +68,6 @@ h1 {
 .city-table h3 {
     margin-bottom: 5px;
 }
-
 
 .week-head {
     font-weight: 600;
@@ -95,8 +94,8 @@ td {
 .table-head td {
     position: sticky;
     top: -1px;
-    text-align: center;
     z-index: 2;
+    text-align: center;
 }
 
 .col-end {
@@ -256,12 +255,12 @@ td a:hover {
 
 /*table places styles*/
 
-
-.store-head{
+.store-head {
     z-index: 3 !important;
     left: 23px;
 }
-.fio-head{
+
+.fio-head {
     z-index: 3 !important;
     left: 47px;
 }
@@ -278,9 +277,11 @@ td a:hover {
 .table-head .places-cell {
     z-index: 4 !important;
 }
-.bg-white{
+
+.bg-white {
     background-color: white;
 }
+
 .city-table {
     margin-top: 0;
     width: 100%;
@@ -295,17 +296,18 @@ td a:hover {
     width: 0;
 }
 
-
-.history{
+.history {
     position: absolute;
     left: 20px;
     color: red;
     font-size: 14px;
 }
+
 .history p {
     margin: 0;
     padding: 0;
 }
+
 @media screen and (max-width: 950px) {
 
     #info-wrap {
@@ -338,7 +340,8 @@ td a:hover {
         font-size: 1.2rem;
         margin-bottom: .4rem;
     }
-    .history{
+
+    .history {
         font-size: 12px;
         max-width: 150px;
     }
@@ -349,9 +352,10 @@ td a:hover {
         float: none;
     }
 
-    /*.table-wrap {*/
-    /*max-width: 576px;*/
-    /*}*/
+    #rr-main {
+        padding: 10px 5px;
+    }
+
     .tools-wrap {
         margin-bottom: 50px;
         width: 90%;
@@ -373,10 +377,12 @@ td a:hover {
     #info-wrap {
         align-items: flex-end;
     }
+
     .city-table {
-        margin-top: 0 ;
+        margin-top: 0;
     }
 }
+
 @media screen and (min-width: 576px) {
     .city-table {
         margin-top: 213px !important;
@@ -394,7 +400,6 @@ td a:hover {
         margin-top: 175px !important;
     }
 }
-
 
 @media print {
     .print-button, .date-form {

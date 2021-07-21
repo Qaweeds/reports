@@ -20,6 +20,7 @@ class Hats extends Model
         'rent',
         'salary',
         'other_costs',
+        'distributed_costs',
         'discounts',
         'items_sold',
         'items_sold_ret',

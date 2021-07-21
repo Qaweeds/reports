@@ -16,12 +16,14 @@ class BaseDistibutorsController extends Controller
     private $keys;
     private $shuffleData;
     private $shuffled;
+    protected $names;
+    protected $cities = ['Харьков', 'Одесса', 'Хмельницкий'];
     public static $distributor;
     protected static $table;
 
     public function __construct()
     {
-        if (Request::path() == 'retail') {
+        if (Request::path() == 'all') {
             self::$distributor = new DistributorsRetail();
             self::$table = 'distributors_retails';
         } else {
@@ -34,36 +36,37 @@ class BaseDistibutorsController extends Controller
     public function totalByPeriod(Carbon $date, $period)
     {
         $arr = array();
+        $date = $date->copy();
 
         switch ($period) {
             case 'week':
                 $end = $date->endOfWeek()->format('Y-m-d');
-                $start = Carbon::parse($end)->subDays(6)->format('Y-m-d');
+                $start = $date->subDays(6)->format('Y-m-d');
                 break;
             case 'month':
                 $end = $date->subMonth()->endOfMonth()->format('Y-m-d');
                 $start = $date->startOfMonth()->format('Y-m-d');
                 break;
             case 'season':
-                if (Carbon::parse($date)->format('n') > 2 and 9) {
-                    $start = Carbon::parse($date)->format('Y') . '-03-01';
-                    $end = Carbon::parse($date)->format('Y') . '-08-31';
-                } elseif (Carbon::parse($date)->format('n') == 1 or Carbon::parse($date)->format('n') == 2) {
+                if ($date->format('n') > 2 and 9) {
+                    $start = $date->format('Y') . '-03-01';
+                    $end = $date->format('Y') . '-08-31';
+                } elseif ($date->format('n') == 1 or $date->format('n') == 2) {
 
-                    $start = Carbon::parse($date)->subYear()->format('Y') . '-09-01';
-                    $end = Carbon::parse($date)->format('Y') . '-02-28';
+                    $start = $date->subYear()->format('Y') . '-09-01';
+                    $end = $date->format('Y') . '-02-28';
                 } else {
-                    $start = Carbon::parse($date)->format('Y') . '-09-01';
-                    $end = Carbon::parse($date)->addYear()->format('Y') . '-02-28';
+                    $start = $date->format('Y') . '-09-01';
+                    $end = $date->addYear()->format('Y') . '-02-28';
                 }
                 break;
             case 'year':
-                if (Carbon::parse($date)->format('n') == 1 or Carbon::parse($date)->format('n') == 2) {
-                    $start = Carbon::parse($date)->subYear()->format('Y') . '-03-01';
-                    $end = Carbon::parse($date)->format('Y') . '-02-28';
+                if ($date->format('n') == 1 or $date->format('n') == 2) {
+                    $start = $date->subYear()->format('Y') . '-03-01';
+                    $end = $date->format('Y') . '-02-28';
                 } else {
-                    $start = Carbon::parse($date)->format('Y') . '-03-01';
-                    $end = Carbon::parse($date)->addYear()->format('Y') . '-02-28';
+                    $start = $date->format('Y') . '-03-01';
+                    $end = $date->addYear()->format('Y') . '-02-28';
                 }
                 break;
             default:
@@ -72,7 +75,7 @@ class BaseDistibutorsController extends Controller
 
         }
 
-        $data = DB::table(self::$table)->select(DB::raw('name, sum(summ) as total'))->whereBetween('date', array($start, $end))->groupBy('name')->get();
+        $data = DB::table(self::$table)->select('name', DB::raw('sum(summ) as total'))->whereBetween('date', array($start, $end))->groupBy('name')->get();
         foreach ($data as $dist) {
             $arr[trim($dist->name)] = $dist->total;
         }

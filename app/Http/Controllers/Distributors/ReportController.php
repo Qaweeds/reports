@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Distributors;
 
+use App\Models\Distributor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
@@ -9,7 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ReportController extends BaseDistibutorsController
 {
-    protected $names;
 
     protected $do_not_show = [
         'Багдасарова Светлана Яковлевна',
@@ -22,7 +22,8 @@ class ReportController extends BaseDistibutorsController
 
     public function index(Request $r)
     {
-        $rule = ['D' => 'sometimes | date | after_or_equal:2021-03-01'];
+
+        $rule = array('D' => 'sometimes | date | after_or_equal:2021-03-01');
         $v = Validator::make($r->input(), $rule);
         if ($v->fails()) {
             return view('report.wrong')->with(Session::flash('date-flip', 'Укажите дату после 3 Марта 2021 года'));
@@ -64,16 +65,18 @@ class ReportController extends BaseDistibutorsController
         $weekcolor = '';
         $summ_by_period = array();
         $weeks_nums = array();
-        $summ_by_period['month'] = $this->totalByPeriod(Carbon::parse($data[0][4]), 'month');
-        $summ_by_period['season'] = $this->totalByPeriod(Carbon::parse($data[0][4]), 'season');
-        $summ_by_period['year'] = $this->totalByPeriod(Carbon::parse($data[0][4]), 'year');
+
+        $firstDate = Carbon::parse($data[0][4]);
+        $summ_by_period['month'] = $this->totalByPeriod($firstDate, 'month');
+        $summ_by_period['season'] = $this->totalByPeriod($firstDate, 'season');
+        $summ_by_period['year'] = $this->totalByPeriod($firstDate, 'year');
         $j = 0;
+
         for ($i = 0; $i < count($data); $i++) {
 
             if (in_array($data[$i][1], $this->do_not_show)) continue;
 
             $last_key = count($data[$i]) - 1;
-            $firstDate = Carbon::parse($data[0][4]);
             $firstDateW = $firstDate;
             $name_row = preg_match($pattern, $data[$i][1]);
             $second_magaz = '';
@@ -86,10 +89,9 @@ class ReportController extends BaseDistibutorsController
                 if ($i == 1) {
                     $t .= '<tbody>';
                 }
-                if ($name_row && $name != 'Офис Харьков 120' and $name != "СайтС" and $data[$i][3] != null and $data[$i][0] != 'УВОЛЕН') { // если ряд с именем
-
+                if ($name_row && $name != 'Офис Харьков 120' and $name != "СайтС" and $data[$i][3] != null) { // если ряд с именем
+                    if(is_null($r->get('D')) and $data[$i][0] == 'УВОЛЕН') continue;
                     if (isset($data[$i + 2]) and !preg_match($pattern, $data[$i + 2][1])) $second_magaz = $data[$i + 2];
-
                     $j++;
                     $t .= '<tr class="name-tr"><td class="places-cell">' . $j . '</td>';
                 } else {
@@ -203,11 +205,11 @@ class ReportController extends BaseDistibutorsController
                 $t .= (isset($summ_by_period['month'][$name])) ? $this->bigAndSmall($summ_by_period['month'][$name]) : 0;
                 $t .= '</td>';
 
-                $t .= '<td class="current-month-summ total-data-border">';
+                $t .= '<td class="current-month-summ">';
                 $t .= (isset($summ_by_period['season'][$name])) ? $this->bigAndSmall($summ_by_period['season'][$name]) : 0;
                 $t .= '</td>';
 
-                $t .= '<td class="current-month-summ total-data-border">';
+                $t .= '<td class="current-month-summ">';
                 $t .= (isset($summ_by_period['year'][$name])) ? $this->bigAndSmall($summ_by_period['year'][$name]) : 0;
                 $t .= '</td>';
 

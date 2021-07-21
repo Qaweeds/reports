@@ -3,84 +3,77 @@
 namespace App\Http\Controllers\Hats;
 
 
-
 use App\Models\Hats;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class HatsController extends BaseHatsController
 {
+    protected $date;
+
+    public function __construct()
+    {
+//        dd(request()->all());
+        $date = request()->get('period');
+        if(isset($date) and $date < Carbon::now()->format('Y-m-d')) $this->date = Carbon::parse($date);
+        else $this->date = Carbon::parse('2021-07-15');
+    }
+
     public function store()
     {
+        set_time_limit(900);
         $date = Carbon::now();
-
-        $square = [
-            1 => '',
-            2 => '',
-            3 => '',
-            4 => '',
-            5 => '',
-             6=> '',
-             7=> '',
-             8=> '',
-             9=> '',
-             10=> '',
-             11=> '',
-             12=> '',
-             13=> '',
-             14=> '',
-             15=> '',
-             16=> '',
-             17=> '',
-             18=> '',
-             19=> '',
-             20=> '',
-        ];
-
+        DB::table('hats')->truncate();
         for ($store = 1; $store < 21; $store++) {
-            for ($i = 1; $i < 45; $i++) {
+            for ($i = 1; $i < 2000; $i++) {
                 Hats::updateOrCreate(
                     [
                         'store' => $store,
                         'date' => $date->copy()->subDays($i)->format('Y-m-d')
                     ],
                     [
-                        'cashbox' => rand(1, 1000) + $i,
-                        'cashbox_ret' => rand(1, 1000) + $i,
-                        'income' => rand(1, 1000) + $i,
-                        'profit' => rand(1, 1000) + $i,
-                        'income_piece' => rand(1, 1000) + $i,
-                        'rent' => rand(1, 1000) + $i,
-                        'salary' => rand(1, 1000) + $i,
-                        'other_costs' => rand(1, 1000) + $i,
-                        'discounts' => rand(1, 1000) + $i,
-                        'items_sold' => rand(1, 1000) + $i,
-                        'items_sold_ret' => rand(1, 1000) + $i,
-                        'items_returned' => rand(1, 1000) + $i,
-                        'unique_sku' => rand(1, 1000) + $i,
-                        'area' => rand(1, 1000) + $i,
-                        'dollar_rate' => rand(1, 1000) + $i,
-                        'SUPERINCOME' => rand(1, 1000) + $i,
+                        'cashbox' => rand(1000, 6000),
+                        'cashbox_ret' => rand(1000, 5000),
+                        'income' => rand(100, 1000),
+                        'profit' => rand(-500, 500),
+                        'income_piece' => rand(1, 100),
+                        'rent' => rand(100, 500),
+                        'salary' => rand(100, 200),
+                        'other_costs' => rand(100, 300),
+                        'distributed_costs' => rand(100, 300),
+                        'discounts' => rand(50, 500),
+                        'items_sold' => rand(10, 30),
+                        'items_sold_ret' => rand(0, 20),
+                        'items_returned' => rand(0, 20),
+                        'unique_sku' => rand(10, 200),
+                        'area' => rand(3, 200),
+                        'dollar_rate' => rand(2700, 2800) / 100,
+                        'SUPERINCOME' => rand(-100, 1000),
                     ]
                 );
             }
         }
     }
 
+
+
     public function get()
     {
         $today = $this->getTodayData();
         $from_first = $this->getFromFirstDate();
         $thirty = $this->getThirtyDays();
+        $header = $this->header();
         $data = array_merge($today, $from_first, $thirty);
 
         return $data;
 
     }
+
     public function getTodayData()
     {
-        $date = Carbon::now()->subDays(10)->format('Y-m-d');
-        $data = DB::select('SELECT store, 
+//        $date = Carbon::now()->subDay()->format('Y-m-d');
+        $date = $this->date->format('Y-m-d');
+        $data = DB::select('SELECT  store, 
                                           cashbox, 
                                           cashbox_ret, 
                                           income, 
@@ -89,11 +82,14 @@ class HatsController extends BaseHatsController
                                           SUPERINCOME,
                                           items_sold, items_sold_ret, 
                                           (items_sold_ret / items_sold * 100) as item_sold_ret_piece, 
-                                          unique_sku, rent / dollar_rate as rent_$,
-                                          salary / dollar_rate as salary_$, 
-                                          other_costs, area, profit / area as profit_by_area
-                                  FROM `hats` WHERE date = \'' . $date . '\' ');
-
+                                          unique_sku, 
+                                          rent  as rent_$,
+                                          salary as salary_$, 
+                                          other_costs as other_costs_$,   
+                                          distributed_costs as distributed_costs_$, 
+                                          area, 
+                                          profit / area as profit_by_area
+                                  FROM `hats` WHERE date = \'' . $date . '\' order by store');
         foreach ($data as &$d) {
             $d = (array)$d;
         }
@@ -106,9 +102,35 @@ class HatsController extends BaseHatsController
         return $arr;
     }
 
+    public static function header()
+    {
+        $date_start = DB::table('hats')->orderBy('date')->limit(1)->value('date');
+        $date_end = DB::table('hats')->orderBy('date', 'desc')->limit(1)->value('date');
+        $monthes = Carbon::parse($date_end)->diffInMonths($date_start);
+        $date = Carbon::now();
+
+
+        for ($i = 1; $i < $monthes; $i++) {
+            $end = $date->copy()->subMonths($i)->lastOfMonth()->format('Y-m-d');
+            $start = $date->copy()->subMonths($i)->firstOfMonth()->format('Y-m-d');
+            $select = DB::table('hats')
+                ->selectRaw(
+                    "(Sum(income_piece) / COUNT(income_piece)) as income_rate, 
+                                Sum(income) as income, 
+                                Sum(cashbox) as cashbox,
+                                Sum(items_sold) as items_sold")
+                ->whereBetween('date', [$start, $end])->first();
+            $data['income_rate'][$start] = $select->income_rate;
+            $data['income'][$start] = $select->income;
+            $data['cashbox'][$start] = $select->cashbox;
+            $data['items_sold'][$start] = $select->items_sold;
+        }
+        return $data;
+    }
+
     public function getFromFirstDate()
     {
-        $date = Carbon::now();
+        $date = $this->date;
         $start = $date->copy()->firstOfMonth();
         $period = '_1';
 
@@ -125,7 +147,7 @@ class HatsController extends BaseHatsController
                                     Sum(items_sold) as items_sold' . $period . ',
                                     (Sum(income_piece) / COUNT(income_piece)) as income_piece_percent' . $period . '
                                 FROM `hats` WHERE date BETWEEN \'' . $start . '\' and \'' . $date . '\' 
-                                GROUP BY store');
+                                GROUP BY store order by store');
         foreach ($data as &$d) {
             $d = (array)$d;
         }
@@ -139,8 +161,8 @@ class HatsController extends BaseHatsController
 
     public function getThirtyDays()
     {
-        $date = Carbon::now();
-        $start = $date->copy()->subDays(30);
+        $date = $this->date;
+        $start = $date->copy()->subMonth();
         $period = '_М';
 
         // SUPERINCOME_piece  -- доля супердохода от дохода
@@ -154,7 +176,7 @@ class HatsController extends BaseHatsController
                                     (Sum(SUPERINCOME) / Sum(income) *100) as SUPERINCOME_piece' . $period . ',
                                     Sum(items_returned) as items_returned' . $period . '              
                                 FROM `hats` WHERE date BETWEEN \'' . $start . '\' and \'' . $date . '\' 
-                                GROUP BY store');
+                                GROUP BY store order by store');
 
         foreach ($data as &$d) {
             $d = (array)$d;

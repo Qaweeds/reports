@@ -12,7 +12,7 @@ class DistributorsData extends Command
      *
      * @var string
      */
-    protected $signature = 'command:distdata';
+    protected $signature = 'distdata';
 
     /**
      * The console command description.
@@ -38,6 +38,7 @@ class DistributorsData extends Command
      */
     public function handle()
     {
-        return dispatch(new DownloadDistributorsData());
+        dispatch(new DownloadDistributorsData());
+        return 0;
     }
 }
