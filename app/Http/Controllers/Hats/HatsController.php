@@ -167,7 +167,7 @@ class HatsController extends BaseHatsController
 
         // SUPERINCOME_piece  -- доля супердохода от дохода
 
-        $data = DB::select('SELECT 
+        $data =DB::select('SELECT 
                                     Sum(cashbox / dollar_rate) as cashbox_$' . $period . ',
                                     Sum(income / dollar_rate) as income_$' . $period . ',
                                     Sum(profit / dollar_rate) as profit_$' . $period . ',
@@ -181,7 +181,6 @@ class HatsController extends BaseHatsController
         foreach ($data as &$d) {
             $d = (array)$d;
         }
-
         foreach ($data as $store) {
             foreach ($store as $key => $val) {
                 $arr[$key][] = $val;
