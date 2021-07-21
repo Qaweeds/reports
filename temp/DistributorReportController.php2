@@ -1,0 +1,145 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Models\Distributor;
+use Illuminate\Support\Facades\DB;
+
+class DistributorReportController extends Controller
+{
+    public static function getData($date = null)
+    {
+        $range = 28;
+        $cityData = array();
+        $no_tabel = [
+            'Багдасарова Светлана Яковлевна ',
+            'Ушакова Евгения Владимировна ',
+            'Ковалева Алина Олеговна (осн.)',
+            'Ковресов Владислав Константинович (осн.)',
+            'Корх Игорь Григорьевич ',
+            'Окопная Юлия Вадимовна (осн.)',
+            'Темная Анна Игоревна ',
+            'Титкова Анна Вячеславовна '
+        ];
+
+        $rangeEnd = (isset($date)) ? $date : Carbon::now()->format('Y-m-d');
+        $rangeStart = Carbon::parse($rangeEnd)->subDays($range)->format('Y-m-d');
+//        $rangeEnd = '2021-05-18';
+//        $rangeStart = '2021-05-03';
+        $names = Distributor::distinct()->whereBetween('date', array($rangeStart, $rangeEnd))->orderBy('name')->pluck('name');
+        $dates = Distributor::distinct()->whereBetween('date', array($rangeStart, $rangeEnd))->orderByDesc('date')->pluck('date')->toArray();
+
+        foreach ($names as $name) {
+            $data = DB::table('distributors')
+                ->whereBetween('date', array($rangeStart, $rangeEnd))
+                ->where('name', $name)
+                ->orderByDesc('date')
+                ->orderBy('store')
+                ->get()->toArray();
+            foreach ($data as $dayData) {
+                $bigData[$name][$dayData->store][$dayData->date] = ($dayData->summ) ? $dayData->summ : null;
+            }
+            $tabel = DB::table('distributor_timesheets')
+                ->whereBetween('date', array($rangeStart, $rangeEnd))
+                ->where('name', $name)
+                ->get()->toArray();
+            foreach ($tabel as $dayData) {
+                $tableData[$name][$dayData->store][$dayData->date] = $dayData->work;
+            }
+        }
+        foreach ($bigData as $name => $data) {
+            if (in_array($name, $no_tabel)) continue;
+            foreach ($data as $store => $name_data) {
+                foreach ($name_data as $date => $day_data) {
+                    if (is_null($day_data)) {
+                        $check = $tableData[$name][$store][$date];
+                        if ($check == '1') $bigData[$name][$store][$date] = 0;
+                    }
+//
+                }
+            }
+        }
+
+
+        // Убираем "пустые магазины"
+        foreach ($bigData as $name_q => & $data_q) {
+            foreach ($data_q as $key_q => & $dates_q) {
+                $bgst[] = count($dates_q);
+                $q = 0;
+                foreach ($dates_q as & $d_q) {
+                    if ($d_q != null) {
+                        $q++;
+                    }
+                }
+                if (!$q and count($data_q) > 1) {
+                    unset($data_q[$key_q]);
+                }
+            }
+        }
+
+        // Заполняем пустые дни. Костыль, если записи по реализатору не попадали в базу последние 45 дней (Отсутствует в выгрузке 1С)
+        foreach ($bigData as $name_g => & $stores_g) {
+            foreach ($stores_g as & $store_g) {
+                if (count($store_g) < max($bgst)) {
+                    $j = max($bgst) - count($store_g);
+                    for ($i = 0; $i < $j; $i++) {
+                        array_unshift($store_g, null);
+                    }
+                }
+            }
+        }
+        // Получаем сумму выручки
+        foreach ($bigData as $name => $data) {
+
+            if (count($data) > 1) {
+                $arr[] = null;
+                $arr[] = $name;
+                foreach ($dates as $date) {
+                    $check = null;
+                    foreach ($tableData[$name] as $store => $day_data) {
+                        if ($check) break;
+                        $check = $tableData[$name][$store][$date];
+                    }
+                    if ($check) {
+                        $summ = Distributor::where('name', $name)->where('date', $date)->sum('summ');
+                    } else {
+                        $summ = null;
+                    }
+                    $arr[] = $summ;
+                }
+                $arr[] = null;
+                $cityData[] = $arr;
+                unset($arr);
+            } else {
+                foreach ($data as $store => $total) {
+                    $arr[] = null;
+                    $arr[] = $name;
+                    foreach ($total as $summ) {
+                        $arr[] = $summ;
+                    }
+                    $arr[] = null;
+                    $cityData[] = $arr;
+                    unset($arr);
+                }
+            }
+            foreach ($data as $store => $total) {
+                $arr[] = null;
+                $arr[] = $store;
+                foreach ($total as $summ) {
+                    $arr[] = $summ;
+                }
+                $arr[] = null;
+                $cityData[] = $arr;
+                unset($arr);
+            }
+        }
+        $header = array_merge(array(null, null, null, null), $dates);
+        $header[] = null;
+        array_unshift($cityData, $header);
+        return $cityData;
+    }
+
+
+}

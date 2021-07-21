@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Carbon\Carbon;
+
+class DistributorReportController extends Controller
+{
+    public static function getData($date = null)
+    {
+
+        $data = MsDistDataController::getData();
+        $bigData = $data[0];
+        $dates = $data[1];
+
+        // Получаем сумму выручки и меняем структуру
+        foreach ($bigData as $name => $data) {
+            if (count($data) > 1) {
+                $arr[] = null;
+                $arr[] = $name;
+                foreach ($dates as $date) {
+                    $summ = 0;
+                    foreach ($data as $d){
+                        $summ += $d[$date];
+                    }
+                    $arr[] = ($summ) ? $summ : null;
+                }
+                $arr[] = null;
+                $cityData[] = $arr;
+                unset($arr);
+            } else {
+                foreach ($data as $store => $total) {
+                    $arr[] = null;
+                    $arr[] = $name;
+                    foreach ($total as $summ) {
+                        $arr[] = ($summ) ? $summ : null;
+                    }
+                    $arr[] = null;
+                    $cityData[] = $arr;
+                    unset($arr);
+                }
+            }
+            foreach ($data as $store => $total) {
+                $arr[] = null;
+                $arr[] = $store;
+                foreach ($total as $summ) {
+                    $arr[] = ($summ) ? $summ : null;
+                }
+                $arr[] = null;
+                $cityData[] = $arr;
+                unset($arr);
+            }
+        }
+
+
+        $header = array_merge(array(null, null, null, null ), $dates);
+        $header[] = null;
+        array_unshift($cityData, $header);
+        return $cityData;
+    }
+
+
+}

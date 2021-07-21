@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Adldap\Adldap;
+use Adldap\Schemas\ActiveDirectory;
+use Illuminate\Support\Facades\Auth;
+
+class ldapController extends Controller
+{
+    public function index()
+    {
+        if (isset($_COOKIE['token'])) {
+            return redirect()->route('report');
+        }
+        return view('login');
+    }
+
+    public function login(Request $r)
+    {
+
+        $name = $r->post('login');
+        $pass = $r->post('password');
+
+        try {
+            $config = [
+                'hosts' => config('ldap.hosts'),
+                'base_dn' => config('ldap.base_dn'),
+                'username' => $name . config('ldap.suffix'),
+                'password' => $pass,
+                'schema' => ActiveDirectory::class,
+            ];
+
+            $connectionName = 'conn';
+
+            $ad = new Adldap();
+            $ad->addProvider($config, $connectionName);
+            $provider = $ad->connect($connectionName);
+            $manager = $provider->search()->users()->find($name);
+//            $group = $manager->getGroupNames($recursive = true);
+//            dd($group);
+            if (!$manager) {
+                return redirect()->route('login.index')->withErrors(['message' => 'Пользователь не найден!']);
+            }
+            if (!$manager->inGroup('ReportR', $recursive = true)) {
+
+                return redirect()->route('login.index')->withErrors(['message' => 'Доступ запрещен']);
+
+            }
+
+        } catch (\Exception $e) {
+//            return redirect()->route('login.index')->withErrors(['message' => $e->getMessage()]);
+            return redirect()->route('login.index')->withErrors(['message' => 'Не верные данные']);
+        }
+        
+        return redirect()->route('report');
+    }
+}
+Cookie::queue('token', 'waeawejaiwjeaw', 2500);Cookie::queue('token', 'waeawejaiwjeaw', 2500);

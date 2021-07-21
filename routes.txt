@@ -1,0 +1,36 @@
++--------+-----------+-----------------------+-----------------------+---------------------------------------------------------------+----------------------------------------------+
+| Domain | Method    | URI                   | Name                  | Action                                                        | Middleware                                   |
++--------+-----------+-----------------------+-----------------------+---------------------------------------------------------------+----------------------------------------------+
+|        | GET|HEAD  | /                     | report                | App\Http\Controllers\Distributors\ReportController@index      | web                                          |
+|        |           |                       |                       |                                                               | App\Http\Middleware\Authenticate             |
+|        | GET|HEAD  | all                   | report_retail         | App\Http\Controllers\Distributors\ReportController@index      | web                                          |
+|        |           |                       |                       |                                                               | App\Http\Middleware\Authenticate             |
+|        | GET|HEAD  | api/api               | api.index             | App\Http\Controllers\Distributors\ApiTestController@index     | api                                          |
+|        | POST      | api/api               | api.store             | App\Http\Controllers\Distributors\ApiTestController@store     | api                                          |
+|        | GET|HEAD  | api/api/create        | api.create            | App\Http\Controllers\Distributors\ApiTestController@create    | api                                          |
+|        | DELETE    | api/api/{api}         | api.destroy           | App\Http\Controllers\Distributors\ApiTestController@destroy   | api                                          |
+|        | PUT|PATCH | api/api/{api}         | api.update            | App\Http\Controllers\Distributors\ApiTestController@update    | api                                          |
+|        | GET|HEAD  | api/api/{api}         | api.show              | App\Http\Controllers\Distributors\ApiTestController@show      | api                                          |
+|        | GET|HEAD  | api/api/{api}/edit    | api.edit              | App\Http\Controllers\Distributors\ApiTestController@edit      | api                                          |
+|        | GET|HEAD  | api/user              |                       | Closure                                                       | api                                          |
+|        |           |                       |                       |                                                               | App\Http\Middleware\Authenticate:api         |
+|        | GET|HEAD  | assets/javascript     | debugbar.assets.js    | Barryvdh\Debugbar\Controllers\AssetController@js              | Barryvdh\Debugbar\Middleware\DebugbarEnabled |
+|        |           |                       |                       |                                                               | Closure                                      |
+|        | GET|HEAD  | assets/stylesheets    | debugbar.assets.css   | Barryvdh\Debugbar\Controllers\AssetController@css             | Barryvdh\Debugbar\Middleware\DebugbarEnabled |
+|        |           |                       |                       |                                                               | Closure                                      |
+|        | DELETE    | cache/{key}/{tags?}   | debugbar.cache.delete | Barryvdh\Debugbar\Controllers\CacheController@delete          | Barryvdh\Debugbar\Middleware\DebugbarEnabled |
+|        |           |                       |                       |                                                               | Closure                                      |
+|        | GET|HEAD  | clockwork/{id}        | debugbar.clockwork    | Barryvdh\Debugbar\Controllers\OpenHandlerController@clockwork | Barryvdh\Debugbar\Middleware\DebugbarEnabled |
+|        |           |                       |                       |                                                               | Closure                                      |
+|        | GET|HEAD  | hats                  | hats.create           | App\Http\Controllers\Hats\HatsReportController@create         | web                                          |
+|        |           |                       |                       |                                                               | App\Http\Middleware\Authenticate             |
+|        | GET|HEAD  | login                 | login.index           | App\Http\Controllers\ldapController@index                     | web                                          |
+|        | POST      | login                 | login.login           | App\Http\Controllers\ldapController@login                     | web                                          |
+|        | GET|HEAD  | open                  | debugbar.openhandler  | Barryvdh\Debugbar\Controllers\OpenHandlerController@handle    | Barryvdh\Debugbar\Middleware\DebugbarEnabled |
+|        |           |                       |                       |                                                               | Closure                                      |
+|        | GET|HEAD  | telescope/{id}        | debugbar.telescope    | Barryvdh\Debugbar\Controllers\TelescopeController@show        | Barryvdh\Debugbar\Middleware\DebugbarEnabled |
+|        |           |                       |                       |                                                               | Closure                                      |
+|        | GET|HEAD  | test                  |                       | App\Http\Controllers\Test                                     | web                                          |
+|        |           |                       |                       |                                                               | App\Http\Middleware\Authenticate             |
+|        | GET|HEAD  | {fallbackPlaceholder} |                       | Closure                                                       | web                                          |
++--------+-----------+-----------------------+-----------------------+---------------------------------------------------------------+----------------------------------------------+
