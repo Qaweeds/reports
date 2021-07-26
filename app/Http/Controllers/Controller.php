@@ -42,7 +42,12 @@ class Controller extends BaseController
             if ($arr[0][0] == '-') {
                 if ($arr[1][0] > 5) $r = $arr[1][0] + 1;
                 else $r = $arr[1][0];
-                return '<span class="big minus">' . $arr[0] . '<small class="small">'. $r . '</small></span>';
+                if ($r == 10) {
+                    $arr[0] = $arr[0] - 1;
+                    $r = null;
+                }
+                if (strlen($arr[0]) > 2) return '<span class="big minus">' . $arr[0] . '</span>';
+                return '<span class="big minus">' . $arr[0] . '<small class="small">' . $r . '</small></span>';
             } elseif ($arr[1][0] < 5) {
                 return '<span class="big">' . $arr[0] . '</span>';
             } else {

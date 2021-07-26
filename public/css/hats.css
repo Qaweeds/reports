@@ -20,10 +20,16 @@
 }
 
 #hats-date{
+    color: blue;
     height: 28px;
     border: none;
     width: 193px;
 }
 #hats-date:focus{
     outline: none;
+}
+
+.head_description{
+    text-align: center;
+    font-size: 16px;
 }

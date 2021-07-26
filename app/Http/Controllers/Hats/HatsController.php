@@ -16,7 +16,8 @@ class HatsController extends BaseHatsController
 //        dd(request()->all());
         $date = request()->get('period');
         if(isset($date) and $date < Carbon::now()->format('Y-m-d')) $this->date = Carbon::parse($date);
-        else $this->date = Carbon::parse('2021-07-15');
+        else $this->date = Carbon::now()->subDay();
+
     }
 
     public function store()
@@ -99,7 +100,7 @@ class HatsController extends BaseHatsController
                 $arr[$key][] = $val;
             }
         }
-        return $arr;
+        return $arr  ;
     }
 
     public static function header()
@@ -108,9 +109,9 @@ class HatsController extends BaseHatsController
         $date_end = DB::table('hats')->orderBy('date', 'desc')->limit(1)->value('date');
         $monthes = Carbon::parse($date_end)->diffInMonths($date_start);
         $date = Carbon::now();
+//        dd($monthes);
 
-
-        for ($i = 1; $i < $monthes; $i++) {
+        for ($i = 1; $i <= $monthes; $i++) {
             $end = $date->copy()->subMonths($i)->lastOfMonth()->format('Y-m-d');
             $start = $date->copy()->subMonths($i)->firstOfMonth()->format('Y-m-d');
             $select = DB::table('hats')
@@ -131,7 +132,8 @@ class HatsController extends BaseHatsController
     public function getFromFirstDate()
     {
         $date = $this->date;
-        $start = $date->copy()->firstOfMonth();
+        $end = $date->copy()->format('Y-m-d');
+        $start = $date->copy()->firstOfMonth()->format('Y-m-d');
         $period = '_1';
 
         // cashbox_ret_piece  --доля розничеой кассы к кассе
@@ -146,7 +148,7 @@ class HatsController extends BaseHatsController
                                     Sum(SUPERINCOME) as SUPERINCOME' . $period . ',
                                     Sum(items_sold) as items_sold' . $period . ',
                                     (Sum(income_piece) / COUNT(income_piece)) as income_piece_percent' . $period . '
-                                FROM `hats` WHERE date BETWEEN \'' . $start . '\' and \'' . $date . '\' 
+                                FROM `hats` WHERE date BETWEEN \'' . $start . '\' and \'' . $end . '\' 
                                 GROUP BY store order by store');
         foreach ($data as &$d) {
             $d = (array)$d;
@@ -162,7 +164,8 @@ class HatsController extends BaseHatsController
     public function getThirtyDays()
     {
         $date = $this->date;
-        $start = $date->copy()->subMonth();
+        $end = $date->copy()->format('Y-m-d');
+        $start = $date->copy()->subMonth()->format('Y-m-d');
         $period = '_М';
 
         // SUPERINCOME_piece  -- доля супердохода от дохода
@@ -175,7 +178,7 @@ class HatsController extends BaseHatsController
                                     Sum(SUPERINCOME) as SUPERINCOME' . $period . ',
                                     (Sum(SUPERINCOME) / Sum(income) *100) as SUPERINCOME_piece' . $period . ',
                                     Sum(items_returned) as items_returned' . $period . '              
-                                FROM `hats` WHERE date BETWEEN \'' . $start . '\' and \'' . $date . '\' 
+                                FROM `hats` WHERE date BETWEEN \'' . $start . '\' and \'' . $end . '\' 
                                 GROUP BY store order by store');
 
         foreach ($data as &$d) {

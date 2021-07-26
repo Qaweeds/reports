@@ -1,5 +1,9 @@
 $(document).ready(function () {
 
+    $('.main-store').each(function () {
+       if(this.innerHTML === 'УВ')$(this).next().css('color', 'red');
+    });
+
 
     /*CLOSE IMAGE BOX */
     $('#box').click(function () {

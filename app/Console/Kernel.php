@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\DistributorsData::class,
+        Commands\HatsData::class,
     ];
 
     /**
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
 
         $schedule->command('distdata');
+        $schedule->command('hatsdata');
     }
 
     /**

@@ -188,8 +188,12 @@ class BaseDistibutorsController extends Controller
         }
         for ($i = 1; $i < count($data); $i++) {
             if (preg_match($pattern, $data[$i][1]) and $data[$i][1] != "Офис Харьков 120" and $data[$i][1] != "СайтС") {
-                if (isset($keys[$data[$i][1]])) $data[$i][0] = strtok($keys[$data[$i][1]], ',');
-                else $data[$i][0] = 'УВОЛЕН';
+                if (isset($keys[$data[$i][1]])) {
+                    $data[$i][0] = strtok($keys[$data[$i][1]], ',');
+                } else {
+                    $data[$i][0] = 'УВОЛЕН';
+//                    $data[$i][1] = '<span style="color:red">' . $data[$i][1] . '</span>';
+                }
             }
         }
         return $data;
@@ -210,6 +214,7 @@ class BaseDistibutorsController extends Controller
 
         $this->names[$shortName][] = $name;
         $this->names[$shortName][] = $store;
+//        if($data[0] == 'УВОЛЕН') $shortName = '<span class="name no-events" style="color:red">' . $shortName . '</span>';
         return $shortName;
     }
 

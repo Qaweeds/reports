@@ -96,6 +96,13 @@ class HatsReportController extends BaseHatsController
             'profit_by_area' => 'прибыль с 1м2'
         ];
 
+        $head_description_values = [
+            'income_rate' => 'Доход / СС',
+            'income' => 'Доход',
+            'cashbox' => 'Касса',
+            'items_sold' => 'Шт. продано'
+        ];
+
         foreach ($row_names as $key => $q) {
             $data[$key] = $db_data[$key];
         }
@@ -104,6 +111,7 @@ class HatsReportController extends BaseHatsController
         $table .= '<thead>';
 
         foreach ($data as $key => $value) {
+//            if($key == 'profit_$_М') dd(round(array_sum($value)));
             $table .= '<tr><td class="row_name">' . $row_names[$key] . '</td>';
             if ($key == 'store') $table .= '<td class="td-border-right">Скол</td>';
             elseif (in_array($key, $middle_values)) $table .= '<td class="td-border-right">' . round(array_sum($value) / count($value)) . '&#176;</td>';
@@ -126,7 +134,9 @@ class HatsReportController extends BaseHatsController
         // HEADER TABLE
         $table_header = '<table>';
         foreach ($header as $key => $value) {
+
             $table_header .= '<tr>';
+            $table_header .= '<td class="head_description">' . $head_description_values[$key] . '</td>';
             foreach ($value as $k => $val) {
                 if (Carbon::parse($k)->format('m') < 7) {
                     $bg = 'grey';

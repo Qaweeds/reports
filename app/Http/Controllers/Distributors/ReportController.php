@@ -90,7 +90,6 @@ class ReportController extends BaseDistibutorsController
                     $t .= '<tbody>';
                 }
                 if ($name_row && $name != 'Офис Харьков 120' and $name != "СайтС" and $data[$i][3] != null) { // если ряд с именем
-                    if(is_null($r->get('D')) and $data[$i][0] == 'УВОЛЕН') continue;
                     if (isset($data[$i + 2]) and !preg_match($pattern, $data[$i + 2][1])) $second_magaz = $data[$i + 2];
                     $j++;
                     $t .= '<tr class="name-tr"><td class="places-cell">' . $j . '</td>';
@@ -126,6 +125,7 @@ class ReportController extends BaseDistibutorsController
                             $t .= '<td class="sort week-bg date"><div class="date-wrap week-head no-events">Неделя</div></td>';
                         }
                     } else {
+//                        dd($summ_by_period);
                         if ($firstDateW->format('W') != Carbon::parse($data[0][$key])->format('W')) {
                             $firstDateW = Carbon::parse($data[0][$key]);
                             $totalW = (isset($summ_by_period[$firstDateW->format('W')][$name])) ? $summ_by_period[$firstDateW->format('W')][$name] : 0;
@@ -188,10 +188,15 @@ class ReportController extends BaseDistibutorsController
 
                 $t .= "</tr></thead>";
             } else {
-                if (count($weeks_nums) != 4 or
-                    !isset($summ_by_period[$weeks_nums[2]][$name]) or
-                    !isset($summ_by_period[$weeks_nums[3]][$name]) or
-                    ($summ_by_period[$weeks_nums[2]][$name] + $summ_by_period[$weeks_nums[3]][$name]) == 0) $trend = '';  //ТРЕНДЫ
+//                $w3 = isset($summ_by_period[$weeks_nums[2]][$name]) ? $summ_by_period[$weeks_nums[2]][$name] : 0;
+//                $w4 = isset($summ_by_period[$weeks_nums[3]][$name]) ? $summ_by_period[$weeks_nums[3]][$name] : 0;
+                if (count($weeks_nums) != 4 or (
+                        isset($summ_by_period[$weeks_nums[2]][$name]) and
+                        isset($summ_by_period[$weeks_nums[3]][$name]) and
+                        $summ_by_period[$weeks_nums[2]][$name] + $summ_by_period[$weeks_nums[3]][$name] == 0
+                    ) or (
+                        !isset($summ_by_period[$weeks_nums[2]][$name]) and !isset($summ_by_period[$weeks_nums[3]][$name])
+                    )) $trend = '';  //ТРЕНДЫ
                 else {
                     $weeek_1 = (isset($summ_by_period[$weeks_nums[0]][$name])) ? $summ_by_period[$weeks_nums[0]][$name] : 0;
                     $weeek_2 = (isset($summ_by_period[$weeks_nums[1]][$name])) ? $summ_by_period[$weeks_nums[1]][$name] : 0;

@@ -13,13 +13,5 @@
     <div class="ml-1">
         {!! $table !!}
     </div>
-    <p style="position: absolute;
-                right: -200px;
-                color: red;
-                font-size: 25px;
-                font-weight: bold;
-                top: 176px;">
-        Отчет находится в тестовом режиме.<br> Все цифры случайные.
-    </p>
 @endsection
 

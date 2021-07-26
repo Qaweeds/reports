@@ -1,0 +1,15 @@
+table, .head-border{
+    border: 2px solid black;
+}
+td {
+    border: 1px solid green;
+    text-align: center;
+    min-width: 50px;
+    max-width: 50px;
+}
+
+
+
+.border-r {
+    border-right: 2px solid black;
+}
