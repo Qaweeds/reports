@@ -36,7 +36,7 @@ class DownloadHatsData implements ShouldQueue
     public function handle()
     {
         $data = $this->get('Header_Headlines');
-        $data = $this->trimCity($data);
+//        $data = $this->trimCity($data);
         $data = $this->trimStores($data);
         $data = $this->prepareData($data);
         $this->insert($data);
@@ -46,7 +46,7 @@ class DownloadHatsData implements ShouldQueue
 
     public function insert($insert)
     {
-        foreach ($insert as $store => $data) {
+        foreach ($insert as $data) {
             foreach ($data as $d) {
                 Hats::updateOrCreate(
                     [
@@ -115,6 +115,10 @@ class DownloadHatsData implements ShouldQueue
                 }
             }
         }
+        array_pop($data3); //1002
+        array_pop($data3); //1003
+        array_pop($data3); //1004
+        array_pop($data3); //1005
         return $data3;
     }
 

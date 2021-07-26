@@ -7,6 +7,7 @@ use App\Models\Hats;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class Test2 extends Controller
@@ -17,27 +18,22 @@ class Test2 extends Controller
         $data = $xls->getActiveSheet()->toArray();
         // trim Харьков
         $dates = array_splice($data[8], 2);
-        for ($i = 0; $i < count($data); $i++) {
-            if ($data[$i][1] == 'Харьков') {
-                $j = $i + 1;
-                while ($data[$j][1] != 'Хмельницкий') {
-                    $data2[] = $data[$j];
-                    $j++;
-                }
-            }
-        }
         // trim stores
         $pattern = '/^\d/';
-        for ($i = 0; $i < count($data2); $i++) {
-            if (preg_match($pattern, $data2[$i][1])) {
+        for ($i = 0; $i < count($data); $i++) {
+            if (preg_match($pattern, $data[$i][1])) {
                 $j = $i + 1;
-                while (isset($data2[$j]) and !preg_match($pattern, $data2[$j][1])) {
-                    $data3[$data2[$i][1]][] = $data2[$j];
+                while (isset($data[$j]) and !preg_match($pattern, $data[$j][1])) {
+                    $data3[$data[$i][1]][] = $data[$j];
                     $j++;
                 }
             }
         }
 
+        array_pop($data3);
+        array_pop($data3);
+        array_pop($data3);
+        array_pop($data3);
         foreach ($data3 as $key => $value) {
             foreach ($value as $k => $val) {
                 $data4[$key][$val[1]] = array_splice($val, 2);
@@ -46,7 +42,7 @@ class Test2 extends Controller
         foreach ($data4 as $key => $value) {
             foreach ($value as $k => $val) {
                 foreach ($val as $kk => $v) {
-                    if($v == '#NULL!') $v = 0;
+                    if ($v == '#NULL!') $v = 0;
                     else $v = (float)str_replace(',', '', $v);
                     $data5[$key][$k][$dates[$kk]] = $v;
                 }
@@ -92,7 +88,6 @@ class Test2 extends Controller
                 );
             }
         }
-
 
 
     }
