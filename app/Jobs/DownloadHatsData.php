@@ -36,11 +36,11 @@ class DownloadHatsData implements ShouldQueue
     public function handle()
     {
         $data = $this->get('Header_Headlines');
-//        $data = $this->trimCity($data);
         $data = $this->trimStores($data);
         $data = $this->prepareData($data);
         $this->insert($data);
 
+        echo 'success';
 
     }
 
@@ -80,6 +80,9 @@ class DownloadHatsData implements ShouldQueue
     {
         $xls = IOFactory::load(base_path('storage/app/public/dist/' . $filename . '.xlsx'));
         $data = $xls->getActiveSheet()->toArray();
+
+        $this->dates = array_splice($data[8], 2);
+
         return $data;
     }
 
@@ -98,6 +101,7 @@ class DownloadHatsData implements ShouldQueue
                 }
             }
         }
+
         return $data2;
     }
 
@@ -119,6 +123,7 @@ class DownloadHatsData implements ShouldQueue
         array_pop($data3); //1003
         array_pop($data3); //1004
         array_pop($data3); //1005
+
         return $data3;
     }
 
@@ -153,6 +158,7 @@ class DownloadHatsData implements ShouldQueue
                 }
             }
         }
+
         return $insert;
     }
 

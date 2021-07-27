@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -270,7 +270,7 @@ class DownloadDistributorsData implements ShouldQueue
         $rangeEnd = Carbon::now()->format('Y-m-d');
         $rangeStart = Carbon::parse($rangeEnd)->subDays(45)->format('Y-m-d');
         $stores = $this->stores;
-        $dates = DistributorTimeSheet::distinct()->whereBetween('date', array('2021-03-01', $rangeEnd))->orderByDesc('date')->pluck('date')->toArray();
+        $dates = DistributorTimeSheet::distinct()->whereBetween('date', array($rangeStart, $rangeEnd))->orderByDesc('date')->pluck('date')->toArray();
         foreach ($stores as $store) {
             foreach ($dates as $date) {
                 $names = DistributorTimeSheet::where('store', $store)->where('work', 1)->where('date', $date)->pluck('name');

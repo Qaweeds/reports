@@ -39,6 +39,7 @@ class Test2 extends Controller
                 $data4[$key][$val[1]] = array_splice($val, 2);
             }
         }
+
         foreach ($data4 as $key => $value) {
             foreach ($value as $k => $val) {
                 foreach ($val as $kk => $v) {
@@ -48,7 +49,6 @@ class Test2 extends Controller
                 }
             }
         }
-
         foreach ($data5 as $store => $data) {
             foreach ($dates as $date) {
                 foreach ($data as $field => $day_data) {
@@ -58,8 +58,7 @@ class Test2 extends Controller
                 }
             }
         }
-//        dd($insert);
-        Hats::truncate();
+
         foreach ($insert as $store => $data) {
             foreach ($data as $d) {
                 Hats::updateOrCreate(

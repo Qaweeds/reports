@@ -17,7 +17,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('test')->group(function () {
-        Route::get('/', 'Test2');
+        Route::get('/', 'Test2@handle');
     });
 
 });

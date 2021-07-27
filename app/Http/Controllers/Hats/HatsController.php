@@ -100,7 +100,7 @@ class HatsController extends BaseHatsController
                 $arr[$key][] = $val;
             }
         }
-        return $arr  ;
+        return $arr;
     }
 
     public static function header()
