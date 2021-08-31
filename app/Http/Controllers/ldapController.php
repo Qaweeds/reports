@@ -20,7 +20,6 @@ class ldapController extends Controller
 
     public function login(Request $r)
     {
-
         $name = $r->post('login');
         $pass = $r->post('password');
         $remember = $r->post('remember');
@@ -40,21 +39,18 @@ class ldapController extends Controller
             $manager = $provider->search()->users()->find($name);
             if (!$manager) return redirect()->route('login.index')->withErrors(['message' => 'Пользователь не найден!']);
             if (!$manager->inGroup('ReportR', $recursive = true)) return redirect()->route('login.index')->withErrors(['message' => 'Доступ запрещен']);
-            $check = User::where('name', $manager->name[0])->first();
+            $check = User::query()->where('name', $manager->name[0])->first();
             if (is_null($check)) {
-                User::create(
+                User::query()->create(
                     [
                         'name' => $manager->name[0],
                         'email' => $manager->mail[0],
                         'password' => bcrypt($manager->badpasswordtime[0])
                     ]
                 );
-                $check = User::where('name', $manager->name[0])->first();
+                $check = User::query()->where('name', $manager->name[0])->first();
             }
-
             Auth::login($check, $remember);
-
-
         } catch (\Exception $e) {
             return redirect()->route('login.index')->withErrors(['message' => 'Не верные данные']);
         }
