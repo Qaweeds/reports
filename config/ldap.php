@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'hosts' => ['dc2.olko.local', 'dc1.olko.local'],
-    'base_dn' => 'DC=olko,DC=local',
-    'suffix' => '@olko.local',
-    'user' => 'achaliy',
-    'password' => 'Anton-321',
+    'hosts' => explode(',', env('LDAP_HOST')),
+    'base_dn' => env('LDAP_DN'),
+    'suffix' => env('LDAP_SUFFIX'),
+    'user' => env('LDAP_USER'),
+    'password' => env('LDAP_PASS'),
 ];
